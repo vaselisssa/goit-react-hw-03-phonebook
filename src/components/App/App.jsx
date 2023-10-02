@@ -16,6 +16,22 @@ export default class App extends Component {
     filter: '',
   };
 
+  //* завантаження контактів з локального сховища в разі їх наявності
+  componentDidMount() {
+    const contacts = localStorage.getItem('contacts');
+    const parsedContacts = JSON.parse(contacts);
+    if (parsedContacts) {
+      this.setState({ contacts: parsedContacts });
+    }
+  }
+
+  //* збереження до локального сховища актуального стану контактів при кожній зміні
+  componentDidUpdate(prevProps, prevState) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   //* додавання нового контакту з перевіркою на наявність контактів з таким ім'ям
   addContact = contact => {
     const isInContacts = this.state.contacts.some(
@@ -55,20 +71,6 @@ export default class App extends Component {
       contacts: contacts.filter(({ id }) => id !== contactId),
     }));
   };
-
-  componentDidMount() {
-    const contacts = localStorage.getItem('contacts');
-    const parsedContacts = JSON.parse(contacts);
-    if (parsedContacts) {
-      this.setState({ contacts: parsedContacts });
-    }
-  }
-
-  componentDidUpdate(prevProps, prevState) {
-    if (this.state.contacts !== prevState.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
 
   render() {
     const { contacts, filter } = this.state;
